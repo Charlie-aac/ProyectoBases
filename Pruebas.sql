@@ -9,16 +9,18 @@ SELECT * FROM C_local
 SELECT * FROM Paquete
 SELECT * FROM P_Internacional
 SELECT * FROM P_Nacional
+SELECT * FROM Registros
 SELECT * FROM Ruta_Conductor_Camion
 
 /* ==================== PROCESOS ALMACENADOS ==================== */
 EXEC SP_InformacionEnvio 2
 
 /* ==================== INSERCION DE TABLAS ==================== */
+
 -- Datos Camiones
-INSERT INTO Camion VALUES ('ABC123',10000,'CDMX')
-INSERT INTO Camion VALUES ('DEF456',99999,'CDMX')
-INSERT INTO Camion VALUES ('GHI789',50000,'CDMX')
+INSERT INTO Camion VALUES ('ABC123',1000,'CDMX')
+INSERT INTO Camion VALUES ('DEF456',452,'CDMX')
+INSERT INTO Camion VALUES ('GHI789',798,'CDMX')
 
 -- Datos Conductor
 INSERT INTO Conductor VALUES ('ABCDEFGHIJK12','Luis','Calle 1')
@@ -46,6 +48,7 @@ INSERT INTO Paquete VALUES (5,'Direccion 5',3500,'Pupu','N')
 INSERT INTO Paquete VALUES (6,'Direccion 1',1000,'Juan','I')
 INSERT INTO Paquete VALUES (7,'Direccion 2',2000,'Juanito','I')
 INSERT INTO Paquete VALUES (8,'Direccion 3',3000,'Juanote','I')
+INSERT INTO Paquete VALUES (9,'Direccion 4',4000,'Paco','N')
 
 -- Datos Paquete Nacional
 INSERT INTO P_Nacional VALUES (1,'Oaxaca',1)
@@ -63,6 +66,15 @@ INSERT INTO C_local VALUES (3,'Nombre 3')
 INSERT INTO P_Internacional VALUES (6,'AeroMex',GETDATE(),1)
 INSERT INTO P_Internacional VALUES (7,'AeroMex',GETDATE(),3)
 INSERT INTO P_Internacional VALUES (8,'AeroMex',GETDATE(),2)
+
+/* ====================== PRUEBAS TRIGGER ====================== */
+
+-- Camion
+INSERT INTO Camion VALUES ('DEFr6',99,'CDMX')
+INSERT INTO Camion VALUES ('GHIf89',50000,'CDMX')
+
+-- Registro
+INSERT INTO P_Nacional VALUES (9,'Rufino Tamayo',null)
 
 /* ====================== BORRAR REGISTROS DE TABLAS ====================== */
 DELETE P_Nacional
