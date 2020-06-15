@@ -11,7 +11,7 @@ CREATE TABLE Camion(
 );
 GO
 CREATE TABLE Ruta(
-    Ruta_id			numeric(2),
+    Ruta_id			numeric(4),
     Descripcion		varchar(50),
 
     CONSTRAINT PK_Ruta PRIMARY KEY (Ruta_id),
@@ -31,7 +31,9 @@ CREATE TABLE Ruta_Conductor_Camion(
     RFC				varchar(13),
     Placa			varchar(6),
     Fecha			date CONSTRAINT DF_CC DEFAULT getdate(),
-    Ruta_id			numeric(2),
+    Ruta_id			numeric(4),
+	peso			numeric(7),
+	activo			numeric(1),
 
     CONSTRAINT PK_CC PRIMARY KEY (id_RCC),
     CONSTRAINT FK_Con FOREIGN KEY (RFC)
@@ -40,13 +42,6 @@ CREATE TABLE Ruta_Conductor_Camion(
     REFERENCES Camion(Placa) ON UPDATE cascade,
     CONSTRAINT FK_Ruta FOREIGN KEY (Ruta_id)
     REFERENCES Ruta (Ruta_id) ON UPDATE cascade
-);
-GO
-CREATE TABLE C_local(
-    Codigo			numeric(5),
-    Nombre			varchar(50),
-
-    CONSTRAINT PK_CLocal PRIMARY KEY (Codigo)
 );
 GO
 CREATE TABLE Paquete(
@@ -82,11 +77,18 @@ CREATE TABLE Registros(
     REFERENCES P_Nacional(Codigo)
 );
 GO
+CREATE TABLE C_local(
+    Codigo			numeric(5),
+    Nombre			varchar(50),
+
+    CONSTRAINT PK_CLocal PRIMARY KEY (Codigo)
+);
+GO
 CREATE TABLE P_Internacional(
-    Codigo			  numeric(5),
-    LineaAerea		varchar(25),
-    F_Entrega		  date,
-    Codigo_local	numeric(5),
+    Codigo				numeric(5),
+    LineaAerea			varchar(25),
+    F_Entrega			date,
+    Codigo_local		numeric(5),
 
     CONSTRAINT PK_Internacional PRIMARY KEY (Codigo),
     CONSTRAINT FK_Int_Loc FOREIGN KEY (Codigo_local)
