@@ -9,7 +9,7 @@ SELECT * FROM C_local
 SELECT * FROM Paquete
 SELECT * FROM P_Internacional
 SELECT * FROM P_Nacional
-SELECT * FROM Registros
+SELECT * FROM Registros ORDER BY Destino
 SELECT * FROM Ruta_Conductor_Camion
 
 /* ==================== PROCESOS ALMACENADOS ==================== */
