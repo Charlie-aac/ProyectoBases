@@ -71,6 +71,7 @@ GO
 CREATE TABLE Registros(
 	Registro_ID 	numeric(5),
 	Destino 		varchar(40),
+	Contador		numeric,
 
 	CONSTRAINT PK_Registros PRIMARY KEY (Registro_ID),
 	CONSTRAINT FK_REG_NAC FOREIGN KEY (Registro_ID)

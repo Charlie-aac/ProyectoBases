@@ -100,23 +100,35 @@ BEGIN
 	INSERT INTO Ruta_Conductor_Camion VALUES (@id,@rfc,@placa,GETDATE(),@ruta,@peso,1)
 END
 GO
+
+
+
+
+
+
+
+
 /* ========================= SP_Asignacion ========================= */
 
-CREATE PROCEDURE SP_Asignacion AS
+ALTER PROCEDURE SP_Asignacion AS
 BEGIN
 	DECLARE @codigo numeric, @destino varchar(25), @peso numeric, @id_Ruta numeric, @id_RCC numeric
+	-- Cursos para recorrer todos lo paquetes nacionales que no tienen asignado una ruta
 	DECLARE paquetes CURSOR FOR SELECT Paquete.Codigo,Ciudad_d,Peso_gramos FROM P_Nacional JOIN Paquete ON P_Nacional.Codigo = Paquete.Codigo WHERE id_RCC IS NULL
 	OPEN paquetes
 	FETCH NEXT FROM paquetes INTO @codigo, @destino, @peso
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
+		--Preguntamos si existe ese destino, en caso de que no lo creamos y el id lo guardamos en @id_Ruta
 		IF ((SELECT Ruta_id FROM Ruta WHERE Descripcion LIKE @destino) IS NULL)
 		BEGIN
 			EXEC SP_CrearRuta @destino
 		END
 		SET @id_Ruta = (SELECT Ruta_id FROM Ruta WHERE Descripcion LIKE @destino)
+		--Preguntamos si existe alguna ruta creada con conductor y camion, y que este activa para salir
 		IF ((SELECT id_RCC FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta AND activo = 1) IS NOT NULL)
 		BEGIN
+			-- Si existe ruta activa le asignamos el paquete si hay espacio en el camion
 			IF ((SELECT peso FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta) > @peso)
 			BEGIN
 				SET @id_RCC = (SELECT id_RCC FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta)
@@ -128,10 +140,12 @@ BEGIN
 				WHERE id_RCC = @id_RCC
 			END
 		END
+		-- En el caso de que no la creamos
 		ELSE
 		BEGIN
-			IF ((SELECT MAX(Conductor.RFC) FROM Ruta_Conductor_Camion RIGHT JOIN Conductor ON Ruta_Conductor_Camion.RFC = Conductor.RFC WHERE id_RCC IS NULL OR activo = 0) IS NOT NULL
-			AND (SELECT MAX(Camion.Placa) FROM Ruta_Conductor_Camion RIGHT JOIN Camion ON Ruta_Conductor_Camion.Placa = Camion.Placa WHERE id_RCC IS NULL OR activo = 0) IS NOT NULL)
+			-- La creamos si y solo si hay un camion disponible y un conductor disponible
+			IF ((SELECT MAX(Conductor.RFC) FROM Ruta_Conductor_Camion RIGHT JOIN Conductor ON Ruta_Conductor_Camion.RFC = Conductor.RFC WHERE id_RCC IS NULL OR activo = 0 AND Conductor.RFC != ALL(SELECT RFC FROM Ruta_Conductor_Camion WHERE activo = 1)) IS NOT NULL
+			AND (SELECT MAX(Camion.Placa) FROM Ruta_Conductor_Camion RIGHT JOIN Camion ON Ruta_Conductor_Camion.Placa = Camion.Placa WHERE id_RCC IS NULL OR activo = 0 AND Camion.Placa != ALL(SELECT Placa FROM Ruta_Conductor_Camion WHERE activo = 1)) IS NOT NULL)
 			BEGIN
 				DECLARE @rfc varchar(13), @placa varchar(6), @pesoCamion numeric
 				SET @rfc = (SELECT MAX(Conductor.RFC) FROM Conductor LEFT JOIN Ruta_Conductor_Camion
@@ -144,6 +158,7 @@ BEGIN
 									WHERE Placa = @placa)
 				EXEC SP_RCC @rfc, @placa, @pesoCamion, @id_Ruta
 			END
+			-- Una vez creado asignamos el paquete al camion
 			IF ((SELECT peso FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta) > @peso)
 			BEGIN
 				SET @id_RCC = (SELECT id_RCC FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta)

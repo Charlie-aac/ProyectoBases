@@ -100,7 +100,7 @@ EXEC SP_Asignacion
 /* ====================== PRUEBAS TRIGGER ====================== */
 
 -- Camion
-INSERT INTO Camion VALUES ('DEFr6',999999,'CDMX')
+INSERT INTO Camion VALUES ('DEFr6',1250001,'CDMX')
 INSERT INTO Camion VALUES ('GHIf89',50000,'CDMX')
 
 -- Registro
