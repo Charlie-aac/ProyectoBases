@@ -110,7 +110,7 @@ GO
 
 /* ========================= SP_Asignacion ========================= */
 
-ALTER PROCEDURE SP_Asignacion AS
+CREATE PROCEDURE SP_Asignacion AS
 BEGIN
 	DECLARE @codigo numeric, @destino varchar(25), @peso numeric, @id_Ruta numeric, @id_RCC numeric
 	-- Cursos para recorrer todos lo paquetes nacionales que no tienen asignado una ruta
@@ -159,15 +159,15 @@ BEGIN
 				EXEC SP_RCC @rfc, @placa, @pesoCamion, @id_Ruta
 			END
 			-- Una vez creado asignamos el paquete al camion
-			IF ((SELECT peso FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta) > @peso)
+			IF ((SELECT peso FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta AND activo = 1) > @peso)
 			BEGIN
-				SET @id_RCC = (SELECT id_RCC FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta)
+				SET @id_RCC = (SELECT id_RCC FROM Ruta_Conductor_Camion WHERE Ruta_id = @id_Ruta AND activo = 1)
 				UPDATE P_Nacional
 				SET id_RCC = @id_RCC
 				WHERE Codigo = @codigo
 				UPDATE Ruta_Conductor_Camion
 				SET peso = peso - @peso
-				WHERE id_RCC = @id_RCC
+				WHERE id_RCC = @id_RCC AND activo = 1
 			END
 		END
 		FETCH NEXT FROM paquetes INTO @codigo, @destino, @peso

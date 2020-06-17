@@ -47,7 +47,7 @@ AS
 GO
 /*==================== NACIONAL_REGISTROS==========================*/
 
-ALTER TRIGGER Registro_nac
+CREATE TRIGGER Registro_nac
 ON P_Nacional
 FOR INSERT
 AS

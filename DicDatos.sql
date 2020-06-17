@@ -1,4 +1,4 @@
-use Ventas1
+use PROYECTO_FINAL
 
 --________Diccionario de datos de una base de datos en Sql server___________
 
@@ -6,19 +6,6 @@ use Ventas1
 --características lógicas y puntuales de los datos que se van a utilizar 
 --en el sistema que se programa, incluyendo nombre, descripción, alias, contenido
 -- y organización.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 select 
 	d.object_id,
